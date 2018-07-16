@@ -1,0 +1,6 @@
+[package]
+name = "pnpoly"
+version = "0.1.0"
+authors = ["noah.schwarz <nschwarz@actum.de>"]
+
+[dependencies]
