@@ -1,6 +1,7 @@
 [package]
 name = "pnpoly"
 version = "0.1.0"
-authors = ["noah.schwarz <nschwarz@actum.de>"]
+authors = ["Noah Anabiik Schwarz <noah.anabiik.schwarz@gmail.de>"]
 
-[dependencies]
+[lib]
+path = "src/pnpoly.rs"
