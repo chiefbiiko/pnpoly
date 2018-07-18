@@ -1,6 +1,6 @@
 [package]
 name = "pnpoly"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Noah Anabiik Schwarz <noah.anabiik.schwarz@gmail.de>"]
 
 [lib]
