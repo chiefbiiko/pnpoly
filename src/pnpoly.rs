@@ -45,7 +45,17 @@ int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
 //!
 //! `pnpoly` is a simple port of W. Randolph Franklin's [PNPOLY](https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html) algorithm to Rust.
 
-fn _pnpoly (nvert: usize, vertx: &Vec<f64>, verty: &Vec<f64>, testx: f64, testy: f64) -> bool {
+use std::cmp::PartialOrd;
+use std::ops::Add;
+use std::ops::Div;
+use std::ops::Mul;
+use std::ops::Sub;
+
+fn _pnpoly
+    <T: PartialOrd + Add<Output = T> + Div<Output = T> + Mul<Output = T> + Sub<Output = T> + Copy>
+    (nvert: usize, vertx: &Vec<T>, verty: &Vec<T>, testx: T, testy: T)
+    -> bool
+{
     let mut c: bool = false;
     let mut j: usize = nvert - 1 as usize;
     for i in 0..nvert {
@@ -55,7 +65,7 @@ fn _pnpoly (nvert: usize, vertx: &Vec<f64>, verty: &Vec<f64>, testx: f64, testy:
         }
         j = i;
     }
-    return c;
+    c
 }
 
 /// Performs a *point-included-in-polygon* test
@@ -81,13 +91,18 @@ fn _pnpoly (nvert: usize, vertx: &Vec<f64>, verty: &Vec<f64>, testx: f64, testy:
 ///
 /// Will panic if any *leaf* vectors do not consist of a coordinate **pair**.
 ///
-pub fn pnpoly (vertices: &Vec<Vec<f64>>, point: &Vec<f64>) -> bool {
-    let nvert: usize = vertices.len();
-    let vertx: Vec<f64> = vertices.iter().map(|ref latlng| latlng[0]).collect::<Vec<f64>>();
-    let verty: Vec<f64> = vertices.iter().map(|ref latlng| latlng[1]).collect::<Vec<f64>>();
-    let testx: f64 = point[0];
-    let testy: f64 = point[1];
-    return _pnpoly(nvert, &vertx, &verty, testx, testy);
+pub fn pnpoly
+    <T: PartialOrd + Add<Output = T> + Div<Output = T> + Mul<Output = T> + Sub<Output = T> + Copy>
+    (vertices: &Vec<Vec<T>>, point: &Vec<T>)
+    -> bool
+{
+    _pnpoly(
+        vertices.len(),
+        &vertices.iter().map(|ref latlng| latlng[0]).collect::<Vec<T>>(),
+        &vertices.iter().map(|ref latlng| latlng[1]).collect::<Vec<T>>(),
+        point[0],
+        point[1]
+    )
 }
 
 #[cfg(test)]
