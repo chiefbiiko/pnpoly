@@ -28,7 +28,9 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
 
+/*
 int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
 {
   int i, j, c = 0;
@@ -44,6 +46,8 @@ int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
 //! # pnpoly
 //!
 //! `pnpoly` is a simple port of W. Randolph Franklin's [PNPOLY](https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html) algorithm to Rust.
+//!
+//! **TODO** *make `pnpoly` generic over all numeric types!* - DONE!
 
 use std::cmp::PartialOrd;
 use std::ops::Add;
@@ -89,7 +93,8 @@ fn _pnpoly
 ///
 /// # Panics
 ///
-/// Will panic if any *leaf* vectors do not consist of a coordinate **pair**.
+///   + if any *leaf* vectors do not consist of a coordinate **pair** (is not a vector of length 2)
+///   + if any vector contains an unsigned numeric type, fx u32
 ///
 pub fn pnpoly
     <T: PartialOrd + Add<Output = T> + Div<Output = T> + Mul<Output = T> + Sub<Output = T> + Copy>
@@ -107,15 +112,6 @@ pub fn pnpoly
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    fn test_basic () {
-        let nvert: usize = 4;
-        let vertx: Vec<f64> = vec![ 1.0, 1.0, 2.0, 2.0 ];
-        let verty: Vec<f64> = vec![ 1.0, 2.0, 2.0, 1.0 ];
-        let testx: f64 = 1.2;
-        let testy: f64 = 1.9;
-        assert_eq!(super::_pnpoly(nvert, &vertx, &verty, testx, testy), true);
-    }
     #[test]
     fn test_true () {
         let vertices: Vec<Vec<f64>> = vec![
@@ -137,6 +133,60 @@ mod tests {
         ];
         let point: Vec<f64> = vec![ 3.2, 4.9 ];
         assert_eq!(super::pnpoly(&vertices, &point), false);
+    }
+    #[test]
+    fn test_basic () {
+        let nvert: usize = 4;
+        let vertx: Vec<f64> = vec![ 1.0, 1.0, 2.0, 2.0 ];
+        let verty: Vec<f64> = vec![ 1.0, 2.0, 2.0, 1.0 ];
+        let testx: f64 = 1.2;
+        let testy: f64 = 1.9;
+        assert_eq!(super::_pnpoly(nvert, &vertx, &verty, testx, testy), true);
+    }
+    #[test]
+    fn test_signed_generic_pt1 () {
+        let vertices: Vec<Vec<f32>> = vec![
+            vec![ 1.0, 1.0 ],
+            vec![ 1.0, 4.0 ],
+            vec![ 4.0, 4.0 ],
+            vec![ 4.0, 1.0 ]
+        ];
+        let point: Vec<f32> = vec![ 2.0, 2.0 ];
+        assert_eq!(super::pnpoly(&vertices, &point), true);
+    }
+    #[test]
+    fn test_signed_generic_pt2 () {
+        let vertices: Vec<Vec<i32>> = vec![
+            vec![ 1, 1 ],
+            vec![ 1, 4 ],
+            vec![ 4, 4 ],
+            vec![ 4, 1 ]
+        ];
+        let point: Vec<i32> = vec![ 2, 2 ];
+        assert_eq!(super::pnpoly(&vertices, &point), true);
+    }
+    #[test]
+    fn test_signed_generic_pt3 () {
+        let vertices: Vec<Vec<i64>> = vec![
+            vec![ 1, 1 ],
+            vec![ 1, 4 ],
+            vec![ 4, 4 ],
+            vec![ 4, 1 ]
+        ];
+        let point: Vec<i64> = vec![ 2, 2 ];
+        assert_eq!(super::pnpoly(&vertices, &point), true);
+    }
+    #[test]
+    #[should_panic]
+    fn test_unsigned_generic () {
+        let vertices: Vec<Vec<u32>> = vec![
+            vec![ 1, 1 ],
+            vec![ 1, 4 ],
+            vec![ 4, 4 ],
+            vec![ 4, 1 ]
+        ];
+        let point: Vec<u32> = vec![ 2, 2 ];
+        assert_eq!(super::pnpoly(&vertices, &point), true);
     }
     #[test]
     #[should_panic]
