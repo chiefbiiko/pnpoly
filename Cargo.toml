@@ -1,8 +1,10 @@
 [package]
 name = "pnpoly"
+description = "a point-included-in-polygon test"
 version = "0.3.0"
 authors = ["Noah Anabiik Schwarz <noah.anabiik.schwarz@gmail.com>"]
 license = "MIT"
+repository = "https://github.com/chiefbiiko/pnpoly.git"
 
 # Optional specification of badges to be displayed on crates.io.
 #
